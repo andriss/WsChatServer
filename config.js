@@ -1,4 +1,4 @@
 module.exports = {
-  inactivityTimeoutMs: 60 * 1000,
+  inactivityTimeoutMs: 180 * 1000,
   wsPort: 8081
 };
