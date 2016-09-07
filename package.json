@@ -1,0 +1,19 @@
+{
+  "name": "wssrv",
+  "version": "1.0.0",
+  "description": "ws server side",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [
+    "ws"
+  ],
+  "author": "me",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "bunyan": "^1.8.1",
+    "ws": "^1.1.1"
+  }
+}
