@@ -5,7 +5,7 @@ let typeChecker = require('./TypeChecker')();
 // validates incoming data from ws
 function WsInputValidator() {
 
-  // message is str reveiced from ws
+  // message is str reveiced from ws, should be json
   // returns { error } or { json }
   function tryGetJson(message) {
 

@@ -16,6 +16,7 @@ let userNameValidator = require('./UserNameValidator')(wss);
 let userNameExtractor = require('./userNameExtractor')(wss);
 
 let wsInputValidator = require('./WsInputValidator')();
+let wsSendWrapper = require('./WsSendWrapper')(logger);
 
 logger.info({ type: 'srv', subType: 'start', text: 'Server started' });
 
@@ -38,6 +39,9 @@ wss.on('connection', function(ws) {
     return;
   }
   else {
+
+    wsSendWrapper.wrap(ws); // overrides default ws.send to log errors
+
     ws._sender.userName = userName;
     ws._sender.lastActivityDate = new Date();
     ws.send(JSON.stringify({ type: 'srv', subType: 'connect-succ' })); // says to specific client, that he is successfully connected
