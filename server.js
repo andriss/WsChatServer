@@ -15,9 +15,9 @@ inactivityKicker.watch(wss, config.inactivityTimeoutMs);
 let userNameValidator = require('./UserNameValidator')(wss);
 let userNameExtractor = require('./userNameExtractor')(wss);
 
+let wsInputValidator = require('./WsInputValidator')();
 
-
-logger.info('Server started');
+logger.info({ type: 'srv', subType: 'start', text: 'Server started' });
 
 wss.broadcast = function broadcast(data) {
   wss.clients.forEach(function each(client) {
@@ -44,13 +44,20 @@ wss.on('connection', function(ws) {
 
     let msg = 'User ' + userName + ' has connected!';
     wss.broadcast(JSON.stringify({ type: 'srv', text: msg }));
-    logger.info(msg);
+    logger.info({ type: 'srv', subType: 'connect-succ', userName: userName });
   }
 
   ws.on('message', function(message) {
 
-    let msg = JSON.parse(message);
     let userName = ws._sender.userName;
+    let res = wsInputValidator.tryGetJson(message);
+
+    if (res.error) {
+      logger.warn({ error: res.error, userName: userName });
+      return;
+    }
+
+    let msg = res.json;
 
     if (msg.type === 'leave') {
       wss.broadcast(JSON.stringify({ type: 'srv', text: 'user ' + userName + ' left the chat!' }));
@@ -58,15 +65,15 @@ wss.on('connection', function(ws) {
     }
     else {
       ws._sender.lastActivityDate = new Date();
-      let msgStr = JSON.stringify({ type: 'chat', text: msg.text, userName: ws._sender.userName });
+      let msgStr = JSON.stringify({ type: 'chat', text: msg.text, userName: userName });
       wss.broadcast(msgStr);
-      logger.info({ type: 'chat', text: msg.text, userName: ws._sender.userName });
+      logger.info({ type: 'chat', text: msg.text, userName: userName });
     }
   });
 
   ws.on('close', function close() {
     let userName = ws._sender.userName;
-    logger.info('User ' + userName + ' disconnected');
+    logger.info({ type: 'close', text: 'User ' + userName + ' disconnected', userName: userName });
   });
 
 });

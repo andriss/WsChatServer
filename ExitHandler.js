@@ -29,8 +29,10 @@ function ExitHandler(wss, logger) {
       });
 
       if (err) {
-        console.log(err.stack);
+        logger.error(err.stack);
       }
+
+      console.log('Finishing tasks, exit in 2s');
 
       // seems that ws.send is async and needs some time to complete
       // otherwise (without timeout), messages are not sent
